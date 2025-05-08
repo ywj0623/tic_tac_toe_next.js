@@ -1,12 +1,12 @@
 
 "use client"
 
-import { Suspense } from "react"
+import { Suspense, lazy } from "react"
 import { useGameStatusStore } from "@/providers/GameStatus"
 import { ChessStatusStoreProvider } from "./(template)/ChessStatusScopeStore"
 
-import ChessBoard from "./(template)/ChessBoard"
-import ScoreBoard from "./(template)/ScoreBoard"
+const ChessBoard = lazy(() => import("./(template)/ChessBoard"))
+const ScoreBoard = lazy(() => import("./(template)/ScoreBoard"))
 
 export default function Home() {
   const { onGameStart } = useGameStatusStore((state)=>state)
@@ -33,7 +33,7 @@ export default function Home() {
     })
   }
 
-  return <Suspense fallback={ <div className="text-black">Loading...</div> }>
+  return <Suspense fallback={<div>Loading...</div>}>
     <div className="min-h-screen container mx-auto flex flex-col items-middle justify-center">
       <ChessStatusStoreProvider>
         <ChessBoard />
