@@ -1,7 +1,5 @@
 "use client"
 
-import { useGameStatus } from "../page"
-
 export default function ChessBoard() {
   const rowColumns = [0, 1, 2]
 
