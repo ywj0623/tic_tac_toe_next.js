@@ -1,5 +1,5 @@
 import { createStore } from "zustand"
-import { GameRole } from "@/types/game"
+import { GameRole } from "@/types/game.type"
 
 type IGameStartResult = Record<'aiRole' | 'playerRole', GameRole>
 type GameResult = GameRole | 'tie' | null

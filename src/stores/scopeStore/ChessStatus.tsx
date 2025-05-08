@@ -1,13 +1,12 @@
 import { createStore } from "zustand"
-import { GameRole } from "@/types/game"
+import { SquareRole } from "@/types/game.type"
 
-type SquareRole = GameRole | null
 type SingleRow = [SquareRole, SquareRole, SquareRole]
 type Squares = SingleRow[]
 
 export type ChessStatusState = {
   stepNumber: number
-  xIsNext: boolean
+  oIsNext: boolean
   squares: Squares
   winner: SquareRole
 }
@@ -23,7 +22,7 @@ export type ChessStatusStore = ChessStatusState & ChessStatusActions
 
 export const defaultInitChessState: ChessStatusState = {
   stepNumber: 0,
-  xIsNext: true,
+  oIsNext: true,
   winner: null,
   squares: Array.from({ length: 3 }, () => [null, null, null] as SingleRow),
 }
@@ -37,7 +36,7 @@ export const createGameStatusStore = (
       stepNumber: state.stepNumber + 1,
     })),
     toggleOIsNext: ()=>set((state)=>({
-      xIsNext: !state.xIsNext,
+      oIsNext: !state.oIsNext,
     })),
     updateSquares: (result: Squares)=>set((state)=>({
       squares: state.squares = result,
