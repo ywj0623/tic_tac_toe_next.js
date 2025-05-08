@@ -15,7 +15,6 @@ export default function ChessBoard() {
             {
               rowColumns.map((column: number, columnIndex: number)=>(
                 <div key={columnIndex} >
-                  { (row * 3) + column }
                   <SquareBtn
                   row={row}
                   column={column}
