@@ -3,6 +3,7 @@
 
 import { Suspense } from "react"
 import { useGameStatusStore } from "@/providers/GameStatus"
+import { ChessStatusStoreProvider } from "./(template)/ChessStatusScopeStore"
 
 import ChessBoard from "./(template)/ChessBoard"
 import ScoreBoard from "./(template)/ScoreBoard"
@@ -34,7 +35,9 @@ export default function Home() {
 
   return <Suspense fallback={ <div className="text-black">Loading...</div> }>
     <div className="min-h-screen container mx-auto flex flex-col items-middle justify-center">
-      <ChessBoard />
+      <ChessStatusStoreProvider>
+        <ChessBoard />
+      </ChessStatusStoreProvider>
 
       <div className="my-12" />
 
