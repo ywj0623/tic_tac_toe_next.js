@@ -1,3 +1,5 @@
+"use client"
+
 import { useGameStatusStore } from "@/providers/GameStatus"
 
 interface RoleMarkProps {
@@ -14,11 +16,11 @@ export default function RoleMark(props: RoleMarkProps) {
       }}>
         {
           props.currentRole === 'playerRole'
-            ? <img className={ `${ playerRole === 'X' ? 'w-8' : 'w-10' }` }
-            src={ `/images/${ playerRole === 'X' ? 'x' : 'o' }_white.svg` }/>
+            ? <img className={`${ playerRole === 'X' ? 'w-8' : 'w-10' }`}
+            src={playerRole === undefined ? undefined : `/images/${ playerRole === 'X' ? 'x' : 'o' }_white.svg`}/>
 
-            : <img className={ `${ aiRole === 'X' ? 'w-8' : 'w-10' }` }
-            src={ `/images/${ aiRole === 'X' ? 'x' : 'o' }_white.svg` }/>
+            : <img className={`${ aiRole === 'X' ? 'w-8' : 'w-10' }`}
+            src={aiRole === undefined ? undefined : `/images/${ aiRole === 'X' ? 'x' : 'o' }_white.svg`}/>
         }
     </div>
 
