@@ -1,26 +1,21 @@
 import { createStore } from "zustand"
-
-type GameRole = 'X' | 'O'
-type GameResult = 'X' | 'O' | 'tie'
+import { GameRole } from "@/types/game"
 
 type IGameStartResult = Record<'aiRole' | 'playerRole', GameRole>
-
-interface IGameEndResult {
-  gameResult: GameResult
-}
+type GameResult = GameRole | 'tie' | null
 
 export type GameStatusState = {
   isPlaying: boolean
   aiRole: GameRole | undefined
   playerRole: GameRole | undefined
-  gameResult: GameResult | null
+  gameResult: GameResult
   aiWinCount: number
   playerWinCount: number
 }
 
 export type GameStatusActions = {
   onGameStart: (result: IGameStartResult)=>void
-  onGameEnd: (result: IGameEndResult)=>void
+  onGameEnd: (result: GameResult)=>void
 }
 
 export type GameStatusStore = GameStatusState & GameStatusActions
@@ -48,11 +43,11 @@ export const createGameStatusStore = (
       aiRole: result.aiRole,
       playerRole: result.playerRole,
     })),
-    onGameEnd: (result: IGameEndResult)=>set((state)=>({
+    onGameEnd: (result: GameResult)=>set((state)=>({
       isPlaying: false,
-      gameResult: result.gameResult,
-      aiWinCount: state.aiWinCount + (result.gameResult === state.aiRole ? 1 : 0),
-      playerWinCount: state.playerWinCount + (result.gameResult === state.playerRole ? 1 : 0),
+      gameResult: result,
+      aiWinCount: state.aiWinCount + (result === state.aiRole ? 1 : 0),
+      playerWinCount: state.playerWinCount + (result === state.playerRole ? 1 : 0),
     })),
   }))
 }
