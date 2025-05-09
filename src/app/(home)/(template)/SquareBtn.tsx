@@ -4,7 +4,7 @@ import { useMemo } from "react"
 import { useGameStatusStore } from "@/providers/GameStatus"
 import { useChessStatusStore } from "./ChessStatusScopeStore"
 
-import { SquareRole } from "@/types/game.type"
+import { SquareMarker } from "@/types/game.type"
 
 interface SquareBtnProps {
   row: number
@@ -16,7 +16,7 @@ export default function SquareBtn(props: SquareBtnProps){
   const { isPlaying } = useGameStatusStore((state)=>state)
   const { oIsNext, squares } = useChessStatusStore((state)=>state)
 
-  const currentSquare = useMemo((): SquareRole =>{
+  const currentSquare = useMemo((): SquareMarker =>{
     if (!squares || !props.row || !props.column) {
       return null
     }

@@ -1,21 +1,21 @@
 import { createStore } from "zustand"
-import { SquareRole } from "@/types/game.type"
+import { SquareMarker } from "@/types/game.type"
 
-type SingleRow = [SquareRole, SquareRole, SquareRole]
+type SingleRow = [SquareMarker, SquareMarker, SquareMarker]
 type Squares = SingleRow[]
 
 export type ChessStatusState = {
   stepNumber: number
   oIsNext: boolean
   squares: Squares
-  winner: SquareRole
+  winner: SquareMarker
 }
 
 export type ChessStatusActions = {
   accumulateStepNumber: ()=> void
   toggleOIsNext: ()=> void
   updateSquares: (result: Squares)=> void
-  updateWinner: (result: SquareRole)=> void
+  updateWinner: (result: SquareMarker)=> void
 }
 
 export type ChessStatusStore = ChessStatusState & ChessStatusActions
@@ -41,7 +41,7 @@ export const createGameStatusStore = (
     updateSquares: (result: Squares)=>set((state)=>({
       squares: state.squares = result,
     })),
-    updateWinner: (result: SquareRole)=>set(()=>({
+    updateWinner: (result: SquareMarker)=>set(()=>({
       winner: result,
     })),
   }))

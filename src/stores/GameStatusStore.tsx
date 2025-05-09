@@ -1,13 +1,13 @@
 import { createStore } from "zustand"
-import { GameRole } from "@/types/game.type"
+import { ChessMarker } from "@/types/game.type"
 
-type IGameStartResult = Record<'aiRole' | 'playerRole', GameRole>
-type GameResult = GameRole | 'tie' | null
+type IGameStartResult = Record<'aiChessMarker' | 'playerChessMarker', ChessMarker>
+type GameResult = ChessMarker | 'tie' | null
 
 export type GameStatusState = {
   isPlaying: boolean
-  aiRole: GameRole | undefined
-  playerRole: GameRole | undefined
+  aiChessMarker: ChessMarker | undefined
+  playerChessMarker: ChessMarker | undefined
   gameResult: GameResult
   aiWinCount: number
   playerWinCount: number
@@ -26,8 +26,8 @@ export type GameStatusStore = GameStatusState & GameStatusActions
 
 export const defaultInitGameState: GameStatusState = {
   isPlaying: false,
-  aiRole: undefined,
-  playerRole: undefined,
+  aiChessMarker: undefined,
+  playerChessMarker: undefined,
   gameResult: null,
   aiWinCount: 0,
   playerWinCount: 0,
@@ -40,14 +40,14 @@ export const createGameStatusStore = (
     ...initState,
     onGameStart: (result: IGameStartResult)=>set(()=>({
       isPlaying: true,
-      aiRole: result.aiRole,
-      playerRole: result.playerRole,
+      aiChessMarker: result.aiChessMarker,
+      playerChessMarker: result.playerChessMarker,
     })),
     onGameEnd: (result: GameResult)=>set((state)=>({
       isPlaying: false,
       gameResult: result,
-      aiWinCount: state.aiWinCount + (result === state.aiRole ? 1 : 0),
-      playerWinCount: state.playerWinCount + (result === state.playerRole ? 1 : 0),
+      aiWinCount: state.aiWinCount + (result === state.aiChessMarker ? 1 : 0),
+      playerWinCount: state.playerWinCount + (result === state.playerChessMarker ? 1 : 0),
     })),
   }))
 }

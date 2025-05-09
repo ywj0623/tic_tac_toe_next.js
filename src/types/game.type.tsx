@@ -1,2 +1,2 @@
-export type GameRole = 'X' | 'O'
-export type SquareRole = GameRole | null
+export type ChessMarker = 'X' | 'O'
+export type SquareMarker = ChessMarker | null

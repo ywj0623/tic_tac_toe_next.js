@@ -17,13 +17,13 @@ export default function ScoreBoard(props: ScoreBoardProps) {
       className="bg-white/10 mx-auto mt-24 relative"
       style={ { borderRadius: '40px' } }>
       <div className={ `flex flex-row gap-x-8 flex-nowrap px-10 py-6 items-start ${ !isPlaying || gameResult ? 'opacity-20' : '' }` }>
-        <RoleMark currentRole={'playerRole'}/>
+        <RoleMark currentRole={'playerChessMarker'}/>
 
         <div className="flex justify-center items-center h-20">
           <div className="text-5xl text-white tracking-widest">{ playerWinCount }:{ aiWinCount }</div>
         </div>
 
-        <RoleMark currentRole={ 'aiRole' }/>
+        <RoleMark currentRole={ 'aiChessMarker' }/>
       </div>
 
       {

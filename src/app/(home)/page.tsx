@@ -24,12 +24,12 @@ export default function Home() {
   function handleStartGame() {
     const isAiPreEmptive = choosePreEmptiveRole()
 
-    const aiRole = isAiPreEmptive ? 'X' : 'O'
-    const playerRole = isAiPreEmptive ? 'O' : 'X'
+    const aiChessMarker = isAiPreEmptive ? 'X' : 'O'
+    const playerChessMarker = isAiPreEmptive ? 'O' : 'X'
 
     onGameStart({
-      aiRole,
-      playerRole,
+      aiChessMarker,
+      playerChessMarker,
     })
   }
 
