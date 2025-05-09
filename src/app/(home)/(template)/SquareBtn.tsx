@@ -16,15 +16,9 @@ export default function SquareBtn(props: SquareBtnProps){
   const { isPlaying } = useGameStatusStore((state)=>state)
   const { oIsNext, squares } = useChessStatusStore((state)=>state)
 
-  const currentSquare = useMemo((): SquareMarker =>{
-    if (!squares || !props.row || !props.column) {
-      return null
-    }
-
-    return squares[props.row][props.column]
-  }, [squares, props.row, props.column])
-
   const currentSquareImg = useMemo((): string =>{
+    const currentSquare: SquareMarker = squares?.[props.row]?.[props.column]
+
     switch (currentSquare) {
       case 'X':
         return 'url(/images/x_white.svg)'
@@ -32,11 +26,12 @@ export default function SquareBtn(props: SquareBtnProps){
       case 'O':
         return 'url(/images/o_white.svg)'
 
+      case undefined:
       case null:
       default:
         return ''
     }
-  }, [currentSquare])
+  }, [squares, props.row, props.column])
 
   return <button
   className="squareBtn"
