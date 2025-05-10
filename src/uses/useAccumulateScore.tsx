@@ -1,100 +1,91 @@
-import { positionList, winnerLines } from "@/configs/gameRules.config"
+import { winnerLines } from "@/configs/gameRules.config"
 import { useGameStatusStore } from "@/providers/GameStatus"
-import { useChessStatusStore } from "@/app/(home)/(template)/ChessStatusScopeStore"
 
-import { ChessMarker, blockWeightingMethodsKey } from "@/types/game.type"
+import { ChessMarker, blockWeightingMethodsKey, Squares } from "@/types/game.type"
 
 type IBlockWeightingMethods = {
-  checker: (positionIndex: number[]) => boolean
+  checker: (positionIndex: number[], squares: Squares) => boolean
   score: number
 }
 type BlockWeightingMethods = Record<blockWeightingMethodsKey, IBlockWeightingMethods>
 
 export default function useAccumulateScore(){
   const { playerChessMarker, aiChessMarker } = useGameStatusStore((state) => state)
-  const { squares } = useChessStatusStore((state) => state)
 
-  function blockChecker(type: 'secondBlock' | 'completingLine', role: ChessMarker | undefined): boolean {
-    let result = false
-
+  function blockChecker(
+    type: 'secondBlock' | 'completingLine',
+    role: ChessMarker | undefined,
+    squares: Squares
+  ): boolean {
     if (!role){
-      return result
+      return false
     }
 
-    for (let i = 0; i <= winnerLines.length; i++){
-      const [ a, b, c ] = winnerLines[i]
+    winnerLines.forEach((line, index)=>{
+      const [ a, b, c ] = winnerLines[index]
       const [ x1, y1 ] = a
       const [ x2, y2 ] = b
       const [ x3, y3 ] = c
       const [ emptyBlock1, emptyBlock2, emptyBlock3 ] = [ squares[x1][y1] === null, squares[x2][y2] === null, squares[x3][y3] === null ]
       const [ occupied1, occupied2, occupied3 ] = [ squares[x1][y1] === role, squares[x2][y2] === role, squares[x3][y3] === role ]
 
-      const allEmpty = emptyBlock1 && emptyBlock2 && emptyBlock3
+      // const allEmpty = emptyBlock1 && emptyBlock2 && emptyBlock3
       const oneEmptyOneOccupied = (emptyBlock1 && occupied2) || (occupied1 && emptyBlock2) || (emptyBlock1 && occupied3) || (occupied1 && emptyBlock3) || (emptyBlock2 && occupied3) || (occupied2 && emptyBlock3)
       const twoOccupied = (occupied1 && occupied2) || (occupied1 && occupied3) || (occupied2 && occupied3)
 
-      if (type === 'secondBlock'){
-        if (allEmpty){
-          return result
-        }
-
-        if (oneEmptyOneOccupied){
-          result = true
-        }
+      if (type === 'secondBlock' && oneEmptyOneOccupied){
+        return true
       }
 
-      if (type === 'completingLine'){
-        // console.log('completingLine', role)
-        if (allEmpty || oneEmptyOneOccupied){
-          // console.log('allEmpty || oneEmptyOneOccupied')
-          return result
-        }
-
-        if (twoOccupied){
-          // console.log('twoOccupied')
-          result = true
-        }
-
-        return result
+      if (type === 'completingLine' && twoOccupied){
+        return true
       }
-    }
+    })
 
-    return result
+    return false
   }
 
   const blockWeightingMethods: BlockWeightingMethods = {
     isAroundOpponent: {
-      checker: function(positionRowCol: number[]): boolean {
-        let result = false
+      checker: function(positionRowCol: number[], squares: Squares): boolean {
         const [ row, column ] = positionRowCol
 
         // if specific position has occupied, don't check
         if (squares[row][column] !== null){
-          return result
+          return false
         }
 
-        for (let i = 0; i < positionList.length && !result; i++){
-          const [ offsetX, offsetY ] = positionList[i]
-          const currentX = row + offsetX - 1
-          const currentY = column + offsetY - 1
+        const surroundingDirections = [
+          [row - 1, column],     // 上
+          [row + 1, column],     // 下
+          [row, column - 1],     // 左
+          [row, column + 1],     // 右
+          [row - 1, column - 1], // 左上
+          [row - 1, column + 1], // 右上
+          [row + 1, column - 1], // 左下
+          [row + 1, column + 1]  // 右下
+        ]
 
-          if (currentX >= 0 && currentY >= 0 && currentX < 3 && currentY < 3 && !(currentX === row && currentY === column)){
-            result = squares[currentX][currentY] === playerChessMarker
-          }
-        }
+        const validSurroundingPositions = surroundingDirections.filter(([r, c]) => {
+          // 檢查位置是否在棋盤範圍內 (0-2)
+          return r >= 0 && r < 3 && c >= 0 && c < 3
+        })
+
+        const result = validSurroundingPositions.some(([r, c]) => {
+          return squares[r][c] === playerChessMarker
+        })
 
         return result
       },
       score: 3,
     },
     isInDiagonal :{
-      checker: function(positionRowCol: number[]): boolean {
-        let result = false
+      checker: function(positionRowCol: number[], squares: Squares): boolean {
         const [ row, column ] = positionRowCol
 
         // if specific position has occupied, don't check
         if (squares[row][column] !== null){
-          return result
+          return false
         }
 
         const diagonalPosition = [
@@ -105,80 +96,69 @@ export default function useAccumulateScore(){
           [ 2, 2 ],
         ]
 
-        for (let i = 0; i < diagonalPosition.length && !result; i++) {
-          const [ a, b ] = diagonalPosition[i]
-
-          if (squares[row][column] === squares[a][b]){
-            // console.log(positionRowCol)
-            result = true
-          }
-        }
+        const result = diagonalPosition.some(([r, c])=>{
+          return r === row && c === column
+        })
 
         return result
       },
       score: 5,
     },
     canOccupySecondBlock: {
-      checker: function(positionRowCol: number[]): boolean {
-        let result = false
+      checker: function(positionRowCol: number[], squares: Squares): boolean {
         const [ row, column ] = positionRowCol
 
         // if specific position has occupied, don't check
         if (squares[row][column] !== null){
-          return result
+          return false
         }
 
-        result = blockChecker('secondBlock', aiChessMarker)
+        const result = blockChecker('secondBlock', aiChessMarker, squares)
 
         return result
       },
       score: 10,
     },
     canStopSecondBlock:{
-      checker: function(positionRowCol: number[]): boolean {
-        let result = false
+      checker: function(positionRowCol: number[], squares: Squares): boolean {
         const [ row, column ] = positionRowCol
 
         // if specific position has occupied, don't check
         if (squares[row][column] !== null){
-          return result
+          return false
         }
 
-        result = blockChecker('secondBlock', playerChessMarker)
+        const result = blockChecker('secondBlock', playerChessMarker, squares)
 
         return result
       },
       score: 15,
     },
     canStopCompletingLine:{
-      checker: function(positionRowCol: number[]): boolean {
-        let result = false
+      checker: function(positionRowCol: number[], squares: Squares): boolean {
         const [ row, column ] = positionRowCol
 
         // if specific position has occupied, don't check
         if (squares[row][column] !== null){
-          return result
+          return false
         }
 
-        result = blockChecker('completingLine', playerChessMarker)
-        // console.log('canStopCompletingLine', { row, column }, result)
+        const result = blockChecker('completingLine', playerChessMarker, squares)
 
         return result
       },
       score: 50,
     },
     canCompleteLine: {
-      checker: function(positionRowCol: number[]): boolean {
-        let result = false
+      checker: function(positionRowCol: number[], squares: Squares): boolean {
         const [ row, column ] = positionRowCol
 
         // if specific position has occupied, don't check
         if (squares[row][column] !== null || aiChessMarker){
-          return result
+          return false
         }
 
-        result = blockChecker('completingLine', aiChessMarker)
-        // console.log('canCompleteLine', { row, column }, result)
+        const result = blockChecker('completingLine', aiChessMarker, squares)
 
         return result
       },
@@ -186,7 +166,11 @@ export default function useAccumulateScore(){
     },
   }
 
-  function getScore(positionRowCol: number[], checkMethodKeys: blockWeightingMethodsKey[] = []){
+  function getScore(
+    positionRowCol: number[],
+    checkMethodKeys: blockWeightingMethodsKey[] = [],
+    currentSquares: Squares
+  ): number {
     let total = 0
 
     checkMethodKeys?.forEach((methodName)=>{
@@ -196,7 +180,7 @@ export default function useAccumulateScore(){
         return
       }
 
-      if(checker(positionRowCol)){
+      if(checker(positionRowCol, currentSquares)){
         total += blockWeightingMethods[methodName].score
       }
     })
