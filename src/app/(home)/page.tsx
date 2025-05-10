@@ -9,7 +9,7 @@ const ChessBoard = lazy(() => import("./(template)/ChessBoard"))
 const ScoreBoard = lazy(() => import("./(template)/ScoreBoard"))
 
 export default function Home() {
-  const { onGameStart } = useGameStatusStore((state)=>state)
+  const { onGameStart, initGameStatusStore } = useGameStatusStore((state)=>state)
 
   function choosePreEmptiveRole(){
     const randomNum = Math.random() * 100
@@ -22,6 +22,7 @@ export default function Home() {
   }
 
   function handleStartGame() {
+    initGameStatusStore()
     const isAiPreEmptive = choosePreEmptiveRole()
 
     const aiChessMarker = isAiPreEmptive ? 'X' : 'O'
