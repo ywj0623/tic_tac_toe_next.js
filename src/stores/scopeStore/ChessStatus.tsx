@@ -15,6 +15,7 @@ export type ChessStatusActions = {
   updateSquares: (result: Squares)=> void
   updateSquaresScore: (result: SquaresScore)=> void
   updateWinner: (result: SquareMarker)=> void
+  initChessStatusStore: ()=> void
 }
 
 export type ChessStatusStore = ChessStatusState & ChessStatusActions
@@ -37,6 +38,26 @@ export const defaultInitChessState: ChessStatusState = {
   winner: null,
 }
 
+export const initChessStatusStore = (): Pick<ChessStatusStore, keyof ChessStatusState> => {
+  return {
+    stepNumber: 0,
+    oIsNext: true,
+    squares: Array.from({ length: 3 }, () => [null, null, null] as SingleRow),
+    squaresScore: {
+      '0,0': 0,
+      '0,1': 0,
+      '0,2': 0,
+      '1,0': 0,
+      '1,1': 0,
+      '1,2': 0,
+      '2,0': 0,
+      '2,1': 0,
+      '2,2': 0,
+    },
+    winner: null,
+  }
+}
+
 export const createGameStatusStore = (
   initState: ChessStatusState = defaultInitChessState
 ) => {
@@ -57,5 +78,8 @@ export const createGameStatusStore = (
     updateWinner: (result: SquareMarker)=>set(()=>({
       winner: result,
     })),
+    initChessStatusStore: ()=>set(()=>({
+      ...defaultInitChessState,
+    }))
   }))
 }

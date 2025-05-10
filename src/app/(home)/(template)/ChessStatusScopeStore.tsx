@@ -2,7 +2,7 @@
 
 import { type ReactNode , createContext, useContext, useRef } from "react"
 import { useStore } from "zustand"
-import { type ChessStatusStore, createGameStatusStore } from "@/stores/scopeStore/ChessStatus"
+import { type ChessStatusStore, createGameStatusStore, initChessStatusStore } from "@/stores/scopeStore/ChessStatus"
 
 export type ChessStatusStoreApi = ReturnType<typeof createGameStatusStore>
 export const ChessStatusContext = createContext<ChessStatusStoreApi | undefined>(undefined)
@@ -15,7 +15,7 @@ export const ChessStatusStoreProvider = ({ children }: ChessStatusProviderProps)
   const storeRef = useRef<ChessStatusStoreApi | null>(null)
 
   if (storeRef.current === null) {
-    storeRef.current = createGameStatusStore()
+    storeRef.current = createGameStatusStore(initChessStatusStore())
   }
 
   return <ChessStatusContext.Provider value={storeRef.current}>
