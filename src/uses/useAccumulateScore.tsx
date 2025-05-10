@@ -3,11 +3,11 @@ import { useGameStatusStore } from "@/providers/GameStatus"
 
 import { ChessMarker, blockWeightingMethodsKey, Squares } from "@/types/game.type"
 
-type IBlockWeightingMethods = {
+type BlockWeightingMethodItem = {
   checker: (positionIndex: number[], squares: Squares) => boolean
   score: number
 }
-type BlockWeightingMethods = Record<blockWeightingMethodsKey, IBlockWeightingMethods>
+type BlockWeightingMethods = Record<blockWeightingMethodsKey, BlockWeightingMethodItem>
 
 export default function useAccumulateScore(){
   const { playerChessMarker, aiChessMarker } = useGameStatusStore((state) => state)
@@ -154,7 +154,7 @@ export default function useAccumulateScore(){
         const [ row, column ] = positionRowCol
 
         // if specific position has occupied, don't check
-        if (squares[row][column] !== null || aiChessMarker){
+        if (squares[row][column] !== null || !aiChessMarker){
           return false
         }
 
@@ -177,7 +177,7 @@ export default function useAccumulateScore(){
       const checker = blockWeightingMethods[methodName].checker
 
       if (typeof checker !== 'function'){
-        return
+        return total
       }
 
       if(checker(positionRowCol, currentSquares)){
