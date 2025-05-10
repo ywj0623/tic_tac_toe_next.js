@@ -17,8 +17,8 @@ interface position {
 
 export default function ChessBoard() {
   const { getScore } = useAccumulateScore()
-  const { isPlaying, aiChessMarker, gameResult, onGameEnd } = useGameStatusStore((state) => state)
-  const { squares, stepNumber, oIsNext, squaresScore, winner, accumulateStepNumber, toggleOIsNext, updateSquaresScore, updateSquares, updateWinner, initChessStatusStore } = useChessStatusStore((state) => state)
+  const { aiChessMarker, onGameEnd } = useGameStatusStore((state) => state)
+  const { squares, stepNumber, oIsNext, squaresScore, winner, accumulateStepNumber, toggleOIsNext, updateSquaresScore, updateSquares, updateWinner } = useChessStatusStore((state) => state)
   const rowColumns = [0, 1, 2]
 
   function genAiMovePosition(): position {
@@ -62,7 +62,6 @@ export default function ChessBoard() {
   }
 
   function pickMostWeightPosition(): position {
-    console.log(1, 'pickMostWeightPosition', squaresScore)
     const scoresList = Object.values(squaresScore)
     const maxScore = scoresList.sort((a, b) => b - a)[0]
     const matchedPositionList = scoresList.filter((item) => item === maxScore)
@@ -112,7 +111,6 @@ export default function ChessBoard() {
 
   function handleAiMove(): void {
     const { row, column } = genAiMovePosition()
-    console.log('handleAiMove', { row, column })
     handleUpdateSquares(row, column)
   }
 
@@ -120,10 +118,10 @@ export default function ChessBoard() {
     const methods: blockWeightingMethodsKey[] = [
       'isAroundOpponent',
       'isInDiagonal',
-      // 'canOccupySecondBlock',
-      // 'canStopSecondBlock',
-      // 'canStopCompletingLine',
-      // 'canCompleteLine'
+      'canOccupySecondBlock',
+      'canStopSecondBlock',
+      'canStopCompletingLine',
+      'canCompleteLine'
     ]
 
     return {
@@ -174,7 +172,6 @@ export default function ChessBoard() {
 
   // 監控是否現在換 AI 下棋，是的話直接執行下棋
   useEffect((): void =>{
-    console.log('useEffect', { aiChessMarker, stepNumber, oIsNext })
     if (!aiChessMarker) {
       return
     }
@@ -184,7 +181,6 @@ export default function ChessBoard() {
     const isGameContinue = stepNumber < 9
 
     if ((aiIsX && isFirstMove) || (aiIsX && oIsNext && isGameContinue) || (!aiIsX && !oIsNext && isGameContinue)) {
-      console.log('useEffect 2', { aiChessMarker, stepNumber, oIsNext })
       handleAiMove()
     }
 
@@ -203,13 +199,6 @@ export default function ChessBoard() {
         return
     }
   }, [winner, stepNumber])
-
-  useEffect((): void =>{
-    if (gameResult === null && isPlaying) {
-      initChessStatusStore()
-      return
-    }
-  }, [gameResult, isPlaying])
 
   return <Suspense fallback={<div>Loading...</div>}>
     <div className="flex flex-col flex-wrap gap-y-5">

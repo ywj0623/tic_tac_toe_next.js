@@ -3,13 +3,14 @@
 
 import { Suspense, lazy } from "react"
 import { useGameStatusStore } from "@/providers/GameStatus"
-import { ChessStatusStoreProvider } from "./(template)/ChessStatusScopeStore"
+import { useChessStatusStore } from "./(template)/ChessStatusScopeStore"
 
 const ChessBoard = lazy(() => import("./(template)/ChessBoard"))
 const ScoreBoard = lazy(() => import("./(template)/ScoreBoard"))
 
 export default function Home() {
-  const { onGameStart, initGameStatusStore } = useGameStatusStore((state)=>state)
+  const { onGameStart } = useGameStatusStore((state)=>state)
+  const { initChessStatusStore } = useChessStatusStore((state) => state)
 
   function choosePreEmptiveRole(){
     const randomNum = Math.random() * 100
@@ -22,7 +23,8 @@ export default function Home() {
   }
 
   function handleStartGame() {
-    initGameStatusStore()
+    initChessStatusStore()
+
     const isAiPreEmptive = choosePreEmptiveRole()
 
     const aiChessMarker = isAiPreEmptive ? 'X' : 'O'
@@ -36,9 +38,7 @@ export default function Home() {
 
   return <Suspense fallback={<div>Loading...</div>}>
     <div className="min-h-screen container mx-auto flex flex-col items-middle justify-center">
-      <ChessStatusStoreProvider>
-        <ChessBoard />
-      </ChessStatusStoreProvider>
+      <ChessBoard />
 
       <div className="my-12" />
 

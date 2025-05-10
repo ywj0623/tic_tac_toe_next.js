@@ -16,7 +16,6 @@ export type GameStatusState = {
 export type GameStatusActions = {
   onGameStart: (result: IGameStartResult)=>void
   onGameEnd: (result: GameResult)=>void
-  initGameStatusStore: ()=>void
 }
 
 export type GameStatusStore = GameStatusState & GameStatusActions
@@ -50,15 +49,13 @@ export const createGameStatusStore = (
       isPlaying: true,
       aiChessMarker: result.aiChessMarker,
       playerChessMarker: result.playerChessMarker,
+      gameResult: null,
     })),
     onGameEnd: (result: GameResult)=>set((state)=>({
       isPlaying: false,
       gameResult: result,
       aiWinCount: state.aiWinCount + (result === state.aiChessMarker ? 1 : 0),
       playerWinCount: state.playerWinCount + (result === state.playerChessMarker ? 1 : 0),
-    })),
-    initGameStatusStore: ()=>set(()=>({
-      ...defaultInitGameState,
     })),
   }))
 }

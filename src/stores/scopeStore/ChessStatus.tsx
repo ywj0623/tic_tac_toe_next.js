@@ -79,7 +79,7 @@ export const createGameStatusStore = (
       winner: result,
     })),
     initChessStatusStore: ()=>set(()=>({
-      ...defaultInitChessState,
+      ...initChessStatusStore(),
     }))
   }))
 }
