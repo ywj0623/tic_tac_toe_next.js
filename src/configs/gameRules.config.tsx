@@ -1,16 +1,16 @@
 
-// 以下為每個 square 的座標， [x, y] x 代表 row, y 代表 column
-export const positionList = [
-  [ 0, 0 ],
-  [ 0, 1 ],
-  [ 0, 2 ],
-  [ 1, 0 ],
-  [ 1, 1 ],
-  [ 1, 2 ],
-  [ 2, 0 ],
-  [ 2, 1 ],
-  [ 2, 2 ],
-]
+// // 以下為每個 square 的座標， [x, y] x 代表 row, y 代表 column
+// export const positionList = [
+//   [ 0, 0 ],
+//   [ 0, 1 ],
+//   [ 0, 2 ],
+//   [ 1, 0 ],
+//   [ 1, 1 ],
+//   [ 1, 2 ],
+//   [ 2, 0 ],
+//   [ 2, 1 ],
+//   [ 2, 2 ],
+// ]
 
 // 以下為完成連線的座標， [x, y] x 代表 row, y 代表 column
 export const winnerLines = [
