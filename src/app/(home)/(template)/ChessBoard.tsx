@@ -87,8 +87,8 @@ export default function ChessBoard() {
   }
 
   function checkWinner(squares: Squares): SquareMarker {
-    for (let i = 0; i < winnerLines.length; i++) {
-      const [a, b, c] = winnerLines[i]
+    winnerLines.forEach((_, index) => {
+      const [a, b, c] = winnerLines[index]
       const [x1, y1] = a
       const [x2, y2] = b
       const [x3, y3] = c
@@ -99,7 +99,7 @@ export default function ChessBoard() {
       if (squareA && (squareA === squareB) && (squareA === squareC)) {
         return squareA
       }
-    }
+    })
 
     return null
   }
