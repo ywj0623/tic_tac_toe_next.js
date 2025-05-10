@@ -21,7 +21,7 @@ export default function useAccumulateScore(){
       return false
     }
 
-    winnerLines.forEach((line, index)=>{
+    winnerLines.forEach((_, index)=>{
       const [ a, b, c ] = winnerLines[index]
       const [ x1, y1 ] = a
       const [ x2, y2 ] = b
