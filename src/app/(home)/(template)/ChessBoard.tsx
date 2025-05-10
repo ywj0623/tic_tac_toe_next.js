@@ -107,11 +107,13 @@ export default function ChessBoard() {
   function handleUpdateSquares(row: number, column: number): void {
     const result: Squares = genSquares(row, column)
     updateChessStatusStore(result)
+    return
   }
 
   function handleAiMove(): void {
     const { row, column } = genAiMovePosition()
     handleUpdateSquares(row, column)
+    return
   }
 
   const accumulateSquaresScore = useCallback((currentSquares: Squares): SquaresScore => {
@@ -168,6 +170,7 @@ export default function ChessBoard() {
     toggleOIsNext()
     updateSquaresScore(newScores)
     updateSquares(result)
+    return
   }, [genSquares])
 
   // 監控是否現在換 AI 下棋，是的話直接執行下棋
