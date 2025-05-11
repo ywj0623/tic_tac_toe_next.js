@@ -11,6 +11,12 @@ type BlockWeightingMethods = Record<blockWeightingMethodsKey, BlockWeightingMeth
 
 export default function useAccumulateScore(){
   const { playerAChessMarker, playerBChessMarker } = useGameStatusStore((state) => state)
+  const blockCheckerValidConditions = {
+    canOccupySecondBlock: (playerB: number, empty: number)=>playerB === 1 && empty === 2,
+    canStopSecondBlock: (playerA: number, empty: number)=>playerA === 1 && empty === 2,
+    canStopCompletingLine: (playerA: number, empty: number)=>playerA === 2 && empty === 1,
+    canCompleteLine: (playerB: number, empty: number)=>playerB === 2 && empty === 1
+  }
 
   function blockChecker(
     targetRowCol: number[],
@@ -18,11 +24,11 @@ export default function useAccumulateScore(){
     squares: Squares
   ): boolean {
     let result: boolean[] = []
+    const [targetRow, targetColumn] = targetRowCol
 
     winnerLines.forEach((line) => {
-      const [targetRow, targetColumn] = targetRowCol
       // 篩選出符合當前行列的連線
-      const validLinesToCheck = line.some(([row, column]) => row === targetRow && column === targetColumn)
+      const validLinesToCheck = line.some(([row, column])=>row === targetRow && column === targetColumn)
 
       // 如果該位置不在該行中，則不檢查
       if (!validLinesToCheck) {
@@ -31,28 +37,16 @@ export default function useAccumulateScore(){
 
       // 取得該連線中各個棋格的內容
       const squaresInLineContent = line.map(([row, column]) => squares[row][column])
-
       const playerAPiecesInLine = squaresInLineContent.filter((square)=> square === playerAChessMarker).length
       const playerBPiecesInLine = squaresInLineContent.filter((square)=> square === playerBChessMarker).length
       const emptyCellsInLineCount = squaresInLineContent.filter((square)=> square === null).length
 
-      switch (type) {
-        case 'canOccupySecondBlock':
-          result = [ ...result, playerBPiecesInLine === 1 && emptyCellsInLineCount === 2]
-          break
+      const isValid = blockCheckerValidConditions[type](
+        type.includes('Stop') ? playerAPiecesInLine : playerBPiecesInLine,
+        emptyCellsInLineCount
+      )
 
-        case 'canStopSecondBlock':
-          result = [...result, playerAPiecesInLine === 1 && emptyCellsInLineCount === 2]
-          break
-
-        case 'canStopCompletingLine':
-          result = [...result, playerAPiecesInLine === 2 && emptyCellsInLineCount === 1]
-          break
-
-        case 'canCompleteLine':
-          result = [...result, playerBPiecesInLine === 2 && emptyCellsInLineCount === 1]
-          break
-      }
+      result = [...result, isValid]
     })
 
     return result.some((item)=> item === true)
