@@ -104,7 +104,7 @@ export default function ChessBoard() {
     toggleOIsNext()
     updateSquaresScore(newScores)
     updateSquares(result)
-    // return
+    return
   }, [genSquares])
 
   // 監控是否現在換 AI 下棋，是的話直接執行下棋

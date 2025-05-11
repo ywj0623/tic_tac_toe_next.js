@@ -17,25 +17,19 @@ export default function useGenAiMovePosition() {
 
   function pickMostWeightPosition(): position {
     const scoresList = Object.values(squaresScore)
-    const maxScore = scoresList.sort((a, b) => b - a)[0]
-    const matchedPositionList = scoresList.filter((item) => item === maxScore)
+    const maxScore = scoresList.sort((a, b) => b - a)[0] // sort will change the order of the array, so we need to use a copy of the array
 
-    let matchedPositionIndex = scoresList.indexOf(maxScore)
-    let indices: number[] = []
-    let result: position
+    console.log('scoreList', Object.values(squaresScore))
+    const indices = Object.values(squaresScore).reduce((acc: number[], item, index) => {
+      if (Number(item) === maxScore) {
+        acc = [...acc, index]
+      }
+      return acc
+    }, [])
 
-    if (matchedPositionList.length > 1) {
-      scoresList.forEach((item, index) => {
-        if (item === maxScore) {
-          indices = [...indices, index]
-        }
-      })
+    console.log('indices', indices)
 
-      result = genRandomPosition(indices)
-    } else {
-      indices = [matchedPositionIndex]
-      result = genRandomPosition(indices)
-    }
+    const result = genRandomPosition(indices)
 
     return result
   }
