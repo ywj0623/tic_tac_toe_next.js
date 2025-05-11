@@ -57,14 +57,7 @@ export default function ChessBoard() {
   }
 
   const accumulateSquaresScore = useCallback((currentSquares: Squares): SquaresScore => {
-    const methods: blockWeightingMethodsKey[] = [
-      'isAroundOpponent',
-      'isInDiagonal',
-      'canOccupySecondBlock',
-      'canStopSecondBlock',
-      'canStopCompletingLine',
-      'canCompleteLine'
-    ]
+    const methods: blockWeightingMethodsKey[] = ['isAroundOpponent', 'isInDiagonal', 'canOccupySecondBlock', 'canStopSecondBlock', 'canStopCompletingLine', 'canCompleteLine']
 
     return {
       '0,0': getScore([0, 0], methods, currentSquares),
