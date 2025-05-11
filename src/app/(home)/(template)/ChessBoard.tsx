@@ -22,8 +22,11 @@ export default function ChessBoard() {
     const currentSquaresScore = accumulateSquaresScore(squares)
     updateSquaresScore(currentSquaresScore)
 
-    const { row, column } = genAiMovePosition(currentSquaresScore)
-    handleUpdateSquares(row, column)
+    setTimeout(()=>{
+      const { row, column } = genAiMovePosition(currentSquaresScore)
+      handleUpdateSquares(row, column)
+    }, stepNumber === 0 ? 100 : 200)
+
     return
   }
 
