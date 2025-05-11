@@ -1,5 +1,3 @@
-// import { useGameStatusStore } from "@/providers/GameStatus"
-// import { useChessStatusStore } from "@/app/(home)/(template)/ChessStatusScopeStore"
 import { SquaresScore } from "@/types/game.type"
 
 interface position {
@@ -8,7 +6,6 @@ interface position {
 }
 
 export default function useGenAiMovePosition() {
-  // const { stepNumber } = useChessStatusStore((state) => state)
 
   function genAiMovePosition(currentSquaresScore: SquaresScore): position {
     const { row, column } = pickMostWeightPosition(currentSquaresScore)
