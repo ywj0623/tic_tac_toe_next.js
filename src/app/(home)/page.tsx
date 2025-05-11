@@ -1,7 +1,7 @@
 
 "use client"
 
-import { Suspense, lazy } from "react"
+import { Suspense, lazy, useCallback} from "react"
 import { useGameStatusStore } from "@/providers/GameStatus"
 import { useChessStatusStore } from "./(template)/ChessStatusScopeStore"
 
@@ -12,17 +12,11 @@ export default function Home() {
   const { onGameStart } = useGameStatusStore((state)=>state)
   const { initChessStatusStore } = useChessStatusStore((state) => state)
 
-  function choosePreEmptiveRole(){
-    const randomNum = Math.random() * 100
+  const choosePreEmptiveRole = useCallback(()=>{
+    return Math.random() < 0.5
+  }, [])
 
-    if (randomNum < 50) {
-      return true
-    }
-
-    return false
-  }
-
-  function handleStartGame() {
+  const handleStartGame = useCallback(()=>{
     initChessStatusStore()
 
     const isPlayerBPreEmptive = choosePreEmptiveRole()
@@ -34,7 +28,7 @@ export default function Home() {
       playerAChessMarker,
       playerBChessMarker,
     })
-  }
+  }, [initChessStatusStore, choosePreEmptiveRole])
 
   return <Suspense fallback={<div>Loading...</div>}>
     <div className="min-h-screen container mx-auto flex flex-col items-middle justify-center">
