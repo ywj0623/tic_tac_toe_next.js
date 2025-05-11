@@ -19,7 +19,10 @@ export default function ChessBoard() {
   const rowColumns = [0, 1, 2]
 
   function handleAiMove(): void {
-    const { row, column } = genAiMovePosition()
+    const currentSquaresScore = accumulateSquaresScore(squares)
+    updateSquaresScore(currentSquaresScore)
+
+    const { row, column } = genAiMovePosition(currentSquaresScore)
     handleUpdateSquares(row, column)
     return
   }
@@ -76,11 +79,6 @@ export default function ChessBoard() {
   const genSquares = useCallback((row: number, column: number) : Squares =>{
     const currentSquares = squares.slice()
 
-    // if (squares?.[row]?.[column]) {
-    //   const { row: newRow, column: newColumn } = genAiMovePosition()
-    //   return genSquares(newRow, newColumn)
-    // }
-
     currentSquares[row][column] = oIsNext ? 'X' : 'O'
     return currentSquares
   }, [squares, oIsNext])
@@ -98,11 +96,8 @@ export default function ChessBoard() {
       return
     }
 
-    const newScores = accumulateSquaresScore(result)
-
     accumulateStepNumber()
     toggleOIsNext()
-    updateSquaresScore(newScores)
     updateSquares(result)
     return
   }, [genSquares])

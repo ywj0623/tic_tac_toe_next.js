@@ -1,7 +1,7 @@
 import { winnerLines } from "@/configs/gameRules.config"
 import { useGameStatusStore } from "@/providers/GameStatus"
 
-import { ChessMarker, blockWeightingMethodsKey, Squares } from "@/types/game.type"
+import { blockWeightingMethodsKey, Squares } from "@/types/game.type"
 
 type BlockWeightingMethodItem = {
   checker: (positionIndex: number[], squares: Squares) => boolean
@@ -13,36 +13,49 @@ export default function useAccumulateScore(){
   const { playerAChessMarker, playerBChessMarker } = useGameStatusStore((state) => state)
 
   function blockChecker(
-    type: 'secondBlock' | 'completingLine',
-    role: ChessMarker | undefined,
+    targetRowCol: number[],
+    type: 'canOccupySecondBlock' | 'canStopSecondBlock' | 'canStopCompletingLine' | 'canCompleteLine',
     squares: Squares
   ): boolean {
-    if (!role){
-      return false
-    }
+    let result: boolean[] = []
 
-    winnerLines.forEach((_, index)=>{
-      const [ a, b, c ] = winnerLines[index]
-      const [ x1, y1 ] = a
-      const [ x2, y2 ] = b
-      const [ x3, y3 ] = c
-      const [ emptyBlock1, emptyBlock2, emptyBlock3 ] = [ squares[x1][y1] === null, squares[x2][y2] === null, squares[x3][y3] === null ]
-      const [ occupied1, occupied2, occupied3 ] = [ squares[x1][y1] === role, squares[x2][y2] === role, squares[x3][y3] === role ]
+    winnerLines.forEach((line) => {
+      const [targetRow, targetColumn] = targetRowCol
+      // 篩選出符合當前行列的連線
+      const validLinesToCheck = line.some(([row, column]) => row === targetRow && column === targetColumn)
 
-      // const allEmpty = emptyBlock1 && emptyBlock2 && emptyBlock3
-      const oneEmptyOneOccupied = (emptyBlock1 && occupied2) || (occupied1 && emptyBlock2) || (emptyBlock1 && occupied3) || (occupied1 && emptyBlock3) || (emptyBlock2 && occupied3) || (occupied2 && emptyBlock3)
-      const twoOccupied = (occupied1 && occupied2) || (occupied1 && occupied3) || (occupied2 && occupied3)
-
-      if (type === 'secondBlock' && oneEmptyOneOccupied){
-        return true
+      // 如果該位置不在該行中，則不檢查
+      if (!validLinesToCheck) {
+        return
       }
 
-      if (type === 'completingLine' && twoOccupied){
-        return true
+      // 取得該連線中各個棋格的內容
+      const squaresInLineContent = line.map(([row, column]) => squares[row][column])
+
+      const playerAPiecesInLine = squaresInLineContent.filter((square)=> square === playerAChessMarker).length
+      const playerBPiecesInLine = squaresInLineContent.filter((square)=> square === playerBChessMarker).length
+      const emptyCellsInLineCount = squaresInLineContent.filter((square)=> square === null).length
+
+      switch (type) {
+        case 'canOccupySecondBlock':
+          result = [ ...result, playerBPiecesInLine === 1 && emptyCellsInLineCount === 2]
+          break
+
+        case 'canStopSecondBlock':
+          result = [...result, playerAPiecesInLine === 1 && emptyCellsInLineCount === 2]
+          break
+
+        case 'canStopCompletingLine':
+          result = [...result, playerAPiecesInLine === 2 && emptyCellsInLineCount === 1]
+          break
+
+        case 'canCompleteLine':
+          result = [...result, playerBPiecesInLine === 2 && emptyCellsInLineCount === 1]
+          break
       }
     })
 
-    return false
+    return result.some((item)=> item === true)
   }
 
   const blockWeightingMethods: BlockWeightingMethods = {
@@ -113,7 +126,7 @@ export default function useAccumulateScore(){
           return false
         }
 
-        const result = blockChecker('secondBlock', playerBChessMarker, squares)
+        const result = blockChecker(positionRowCol, 'canOccupySecondBlock', squares)
 
         return result
       },
@@ -128,7 +141,7 @@ export default function useAccumulateScore(){
           return false
         }
 
-        const result = blockChecker('secondBlock', playerAChessMarker, squares)
+        const result = blockChecker(positionRowCol, 'canStopSecondBlock', squares)
 
         return result
       },
@@ -143,7 +156,7 @@ export default function useAccumulateScore(){
           return false
         }
 
-        const result = blockChecker('completingLine', playerAChessMarker, squares)
+        const result = blockChecker(positionRowCol, 'canStopCompletingLine', squares)
 
         return result
       },
@@ -154,11 +167,11 @@ export default function useAccumulateScore(){
         const [ row, column ] = positionRowCol
 
         // if specific position has occupied, don't check
-        if (squares[row][column] !== null || !playerBChessMarker){
+        if (squares[row][column] !== null){
           return false
         }
 
-        const result = blockChecker('completingLine', playerBChessMarker, squares)
+        const result = blockChecker(positionRowCol, 'canCompleteLine', squares)
 
         return result
       },

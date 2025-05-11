@@ -1,5 +1,6 @@
 // import { useGameStatusStore } from "@/providers/GameStatus"
-import { useChessStatusStore } from "@/app/(home)/(template)/ChessStatusScopeStore"
+// import { useChessStatusStore } from "@/app/(home)/(template)/ChessStatusScopeStore"
+import { SquaresScore } from "@/types/game.type"
 
 interface position {
   row: number
@@ -7,27 +8,24 @@ interface position {
 }
 
 export default function useGenAiMovePosition() {
-  const { stepNumber, squaresScore } = useChessStatusStore((state) => state)
+  // const { stepNumber } = useChessStatusStore((state) => state)
 
-  function genAiMovePosition(): position {
-    const { row, column } = stepNumber === 0 ? genRandomPosition() : pickMostWeightPosition()
+  function genAiMovePosition(currentSquaresScore: SquaresScore): position {
+    const { row, column } = pickMostWeightPosition(currentSquaresScore)
 
     return { row, column }
   }
 
-  function pickMostWeightPosition(): position {
-    const scoresList = Object.values(squaresScore)
+  function pickMostWeightPosition(currentSquaresScore: SquaresScore): position {
+    const scoresList = Object.values(currentSquaresScore)
     const maxScore = scoresList.sort((a, b) => b - a)[0] // sort will change the order of the array, so we need to use a copy of the array
 
-    console.log('scoreList', Object.values(squaresScore))
-    const indices = Object.values(squaresScore).reduce((acc: number[], item, index) => {
+    const indices = Object.values(currentSquaresScore).reduce((acc: number[], item, index) => {
       if (Number(item) === maxScore) {
         acc = [...acc, index]
       }
       return acc
     }, [])
-
-    console.log('indices', indices)
 
     const result = genRandomPosition(indices)
 
