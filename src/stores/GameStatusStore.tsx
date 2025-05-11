@@ -10,8 +10,8 @@ export type GameStatusState = {
   playerAChessMarker: ChessMarker | undefined
   playerBChessMarker: ChessMarker | undefined
   gameResult: GameResult
-  aiWinCount: number
-  playerWinCount: number
+  playerAWinCount: number
+  playerBWinCount: number
 }
 
 export type GameStatusActions = {
@@ -28,8 +28,8 @@ export const initGameStatusStore = (): Pick<GameStatusStore, keyof GameStatusSta
     playerAChessMarker: undefined,
     playerBChessMarker: undefined,
     gameResult: null,
-    aiWinCount: 0,
-    playerWinCount: 0,
+    playerAWinCount: 0,
+    playerBWinCount: 0,
   }
 }
 
@@ -39,8 +39,8 @@ export const defaultInitGameState: GameStatusState = {
   playerAChessMarker: undefined,
   playerBChessMarker: undefined,
   gameResult: null,
-  aiWinCount: 0,
-  playerWinCount: 0,
+  playerAWinCount: 0,
+  playerBWinCount: 0,
 }
 
 export const createGameStatusStore = (
@@ -57,8 +57,8 @@ export const createGameStatusStore = (
     onGameEnd: (result: GameResult)=>set((state)=>({
       isPlaying: false,
       gameResult: result,
-      aiWinCount: state.aiWinCount + (result === state.playerBChessMarker ? 1 : 0),
-      playerWinCount: state.playerWinCount + (result === state.playerAChessMarker ? 1 : 0),
+      playerAWinCount: state.playerAWinCount + (result === state.playerAChessMarker ? 1 : 0),
+      playerBWinCount: state.playerBWinCount + (result === state.playerBChessMarker ? 1 : 0),
     })),
   }))
 }

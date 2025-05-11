@@ -10,7 +10,7 @@ interface ScoreBoardProps {
 }
 
 export default function ScoreBoard(props: ScoreBoardProps) {
-  const { isPlaying, gameResult, aiWinCount, playerWinCount } = useGameStatusStore((state) => state)
+  const { isPlaying, gameResult, playerBWinCount, playerAWinCount } = useGameStatusStore((state) => state)
 
   return <Suspense fallback={ <div>Loading...</div> }>
     <div
@@ -20,7 +20,7 @@ export default function ScoreBoard(props: ScoreBoardProps) {
         <RoleMark currentRole={'playerAChessMarker'}/>
 
         <div className="flex justify-center items-center h-20">
-          <div className="text-5xl text-white tracking-widest">{ playerWinCount }:{ aiWinCount }</div>
+          <div className="text-5xl text-white tracking-widest">{ playerAWinCount }:{ playerBWinCount }</div>
         </div>
 
         <RoleMark currentRole={ 'playerBChessMarker' }/>

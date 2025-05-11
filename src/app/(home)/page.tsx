@@ -25,10 +25,10 @@ export default function Home() {
   function handleStartGame() {
     initChessStatusStore()
 
-    const isAiPreEmptive = choosePreEmptiveRole()
+    const isPlayerBPreEmptive = choosePreEmptiveRole()
 
-    const playerAChessMarker = isAiPreEmptive ? 'O' : 'X'
-    const playerBChessMarker = isAiPreEmptive ? 'X' : 'O'
+    const playerAChessMarker = isPlayerBPreEmptive ? 'O' : 'X'
+    const playerBChessMarker = isPlayerBPreEmptive ? 'X' : 'O'
 
     onGameStart({
       playerAChessMarker,
