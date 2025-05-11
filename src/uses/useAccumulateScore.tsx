@@ -10,7 +10,7 @@ type BlockWeightingMethodItem = {
 type BlockWeightingMethods = Record<blockWeightingMethodsKey, BlockWeightingMethodItem>
 
 export default function useAccumulateScore(){
-  const { playerChessMarker, aiChessMarker } = useGameStatusStore((state) => state)
+  const { playerAChessMarker, playerBChessMarker } = useGameStatusStore((state) => state)
 
   function blockChecker(
     type: 'secondBlock' | 'completingLine',
@@ -72,7 +72,7 @@ export default function useAccumulateScore(){
         })
 
         const result = validSurroundingPositions.some(([r, c]) => {
-          return squares[r][c] === playerChessMarker
+          return squares[r][c] === playerAChessMarker
         })
 
         return result
@@ -113,7 +113,7 @@ export default function useAccumulateScore(){
           return false
         }
 
-        const result = blockChecker('secondBlock', aiChessMarker, squares)
+        const result = blockChecker('secondBlock', playerBChessMarker, squares)
 
         return result
       },
@@ -128,7 +128,7 @@ export default function useAccumulateScore(){
           return false
         }
 
-        const result = blockChecker('secondBlock', playerChessMarker, squares)
+        const result = blockChecker('secondBlock', playerAChessMarker, squares)
 
         return result
       },
@@ -143,7 +143,7 @@ export default function useAccumulateScore(){
           return false
         }
 
-        const result = blockChecker('completingLine', playerChessMarker, squares)
+        const result = blockChecker('completingLine', playerAChessMarker, squares)
 
         return result
       },
@@ -154,11 +154,11 @@ export default function useAccumulateScore(){
         const [ row, column ] = positionRowCol
 
         // if specific position has occupied, don't check
-        if (squares[row][column] !== null || !aiChessMarker){
+        if (squares[row][column] !== null || !playerBChessMarker){
           return false
         }
 
-        const result = blockChecker('completingLine', aiChessMarker, squares)
+        const result = blockChecker('completingLine', playerBChessMarker, squares)
 
         return result
       },

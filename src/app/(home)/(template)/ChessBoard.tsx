@@ -14,7 +14,7 @@ const SquareBtn = lazy(() => import("./SquareBtn"))
 export default function ChessBoard() {
   const { genAiMovePosition } = useGenAiMovePosition()
   const { getScore } = useAccumulateScore()
-  const { aiChessMarker, onGameEnd } = useGameStatusStore((state) => state)
+  const { playerBChessMarker, onGameEnd } = useGameStatusStore((state) => state)
   const { squares, stepNumber, oIsNext, winner, accumulateStepNumber, toggleOIsNext, updateSquaresScore, updateSquares, updateWinner } = useChessStatusStore((state) => state)
   const rowColumns = [0, 1, 2]
 
@@ -31,6 +31,8 @@ export default function ChessBoard() {
   }
 
   function checkWinner(squares: Squares): SquareMarker {
+    let winner: SquareMarker = null
+
     winnerLines.forEach((_, index) => {
       const [a, b, c] = winnerLines[index]
       const [x1, y1] = a
@@ -41,11 +43,11 @@ export default function ChessBoard() {
       const squareC = squares[x3][y3]
 
       if (squareA && (squareA === squareB) && (squareA === squareC)) {
-        return squareA
+        winner = squareA
       }
     })
 
-    return null
+    return winner
   }
 
   const accumulateSquaresScore = useCallback((currentSquares: Squares): SquaresScore => {
@@ -102,16 +104,16 @@ export default function ChessBoard() {
     toggleOIsNext()
     updateSquaresScore(newScores)
     updateSquares(result)
-    return
+    // return
   }, [genSquares])
 
   // 監控是否現在換 AI 下棋，是的話直接執行下棋
   useEffect((): void =>{
-    if (!aiChessMarker) {
+    if (!playerBChessMarker) {
       return
     }
 
-    const aiIsX = aiChessMarker === 'X'
+    const aiIsX = playerBChessMarker === 'X'
     const isFirstMove = stepNumber === 0
     const isGameContinue = stepNumber < 9
 
@@ -120,7 +122,7 @@ export default function ChessBoard() {
     }
 
     return
-  }, [aiChessMarker, stepNumber, oIsNext])
+  }, [playerBChessMarker, stepNumber, oIsNext])
 
   useEffect((): void =>{
     switch (winner) {

@@ -1,13 +1,14 @@
 import { createStore } from "zustand"
 import { ChessMarker } from "@/types/game.type"
 
-type IGameStartResult = Record<'aiChessMarker' | 'playerChessMarker', ChessMarker>
+type IGameStartResult = Record<'playerAChessMarker' | 'playerBChessMarker', ChessMarker>
 type GameResult = ChessMarker | 'tie' | null
 
 export type GameStatusState = {
   isPlaying: boolean
-  aiChessMarker: ChessMarker | undefined
-  playerChessMarker: ChessMarker | undefined
+  isPlayWithAi: boolean
+  playerAChessMarker: ChessMarker | undefined
+  playerBChessMarker: ChessMarker | undefined
   gameResult: GameResult
   aiWinCount: number
   playerWinCount: number
@@ -23,8 +24,9 @@ export type GameStatusStore = GameStatusState & GameStatusActions
 export const initGameStatusStore = (): Pick<GameStatusStore, keyof GameStatusState> => {
   return {
     isPlaying: false,
-    aiChessMarker: undefined,
-    playerChessMarker: undefined,
+    isPlayWithAi: true,
+    playerAChessMarker: undefined,
+    playerBChessMarker: undefined,
     gameResult: null,
     aiWinCount: 0,
     playerWinCount: 0,
@@ -33,8 +35,9 @@ export const initGameStatusStore = (): Pick<GameStatusStore, keyof GameStatusSta
 
 export const defaultInitGameState: GameStatusState = {
   isPlaying: false,
-  aiChessMarker: undefined,
-  playerChessMarker: undefined,
+  isPlayWithAi: true,
+  playerAChessMarker: undefined,
+  playerBChessMarker: undefined,
   gameResult: null,
   aiWinCount: 0,
   playerWinCount: 0,
@@ -47,15 +50,15 @@ export const createGameStatusStore = (
     ...initState,
     onGameStart: (result: IGameStartResult)=>set(()=>({
       isPlaying: true,
-      aiChessMarker: result.aiChessMarker,
-      playerChessMarker: result.playerChessMarker,
+      playerAChessMarker: result.playerAChessMarker,
+      playerBChessMarker: result.playerBChessMarker,
       gameResult: null,
     })),
     onGameEnd: (result: GameResult)=>set((state)=>({
       isPlaying: false,
       gameResult: result,
-      aiWinCount: state.aiWinCount + (result === state.aiChessMarker ? 1 : 0),
-      playerWinCount: state.playerWinCount + (result === state.playerChessMarker ? 1 : 0),
+      aiWinCount: state.aiWinCount + (result === state.playerBChessMarker ? 1 : 0),
+      playerWinCount: state.playerWinCount + (result === state.playerAChessMarker ? 1 : 0),
     })),
   }))
 }
