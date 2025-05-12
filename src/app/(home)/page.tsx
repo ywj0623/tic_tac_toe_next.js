@@ -1,12 +1,12 @@
 
-"use client"
+'use client'
 
-import { Suspense, lazy, useCallback} from "react"
-import { useGameStatusStore } from "@/providers/GameStatus"
-import { useChessStatusStore } from "./(template)/ChessStatusScopeStore"
+import { Suspense, lazy, useCallback } from 'react'
+import { useGameStatusStore } from '@/providers/GameStatus'
+import { useChessStatusStore } from './(template)/ChessStatusScopeStore'
 
-const ChessBoard = lazy(() => import("./(template)/ChessBoard"))
-const ScoreBoard = lazy(() => import("./(template)/ScoreBoard"))
+const ChessBoard = lazy(() => import('./(template)/ChessBoard'))
+const ScoreBoard = lazy(() => import('./(template)/ScoreBoard'))
 
 export default function Home() {
   const { onGameStart } = useGameStatusStore((state)=>state)
@@ -28,18 +28,18 @@ export default function Home() {
       playerAChessMarker,
       playerBChessMarker,
     })
-  }, [initChessStatusStore, choosePreEmptiveRole])
+  }, [ initChessStatusStore, choosePreEmptiveRole ])
 
-  return <Suspense fallback={<div>Loading...</div>}>
+  return <Suspense fallback={ <div>Loading...</div> }>
     <div className="min-h-screen container mx-auto flex flex-col items-middle justify-center">
       <ChessBoard />
 
       <div className="my-12" />
 
       <ScoreBoard
-      onClick={()=>{
-        handleStartGame()
-      }} />
+        onClick={ ()=>{
+          handleStartGame()
+        } } />
     </div>
   </Suspense>
 }
